@@ -7,6 +7,8 @@ import edu.icet.crm.repository.CustomerRepository;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
+import java.util.Optional;
+
 @Service
 @RequiredArgsConstructor
 public class CustomerServiceImpl implements CustomerService {
@@ -21,6 +23,19 @@ public class CustomerServiceImpl implements CustomerService {
     @Override
     public void deleteCustomer(Integer id) {
         customerRepository.deleteById(id);
+    }
+
+    @Override
+    public Customer login(String email, String password) {
+        Optional<CustomerEntity> customerEntityOptional = customerRepository.findByEmail(email);
+        if (customerEntityOptional.isPresent()){
+            CustomerEntity customerEntity = customerEntityOptional.get();
+
+            if (customerEntity.getPassword().equals(password)){
+                return mapper.convertValue(customerEntity, Customer.class);
+            }
+        }
+        return null;
     }
 
 }
