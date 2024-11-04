@@ -38,4 +38,17 @@ public class CustomerServiceImpl implements CustomerService {
         return null;
     }
 
+    @Override
+    public boolean deleteCustomerIfCredentialsMatch(String email, String password) {
+        Optional<CustomerEntity> customerEntityOptional = customerRepository.findByEmail(email);
+        if (customerEntityOptional.isPresent()){
+            CustomerEntity customerEntity = customerEntityOptional.get();
+            if (customerEntity.getPassword().equals(password)){
+                customerRepository.delete(customerEntity);
+                return true;
+            }
+        }
+        return false;
+    }
+
 }

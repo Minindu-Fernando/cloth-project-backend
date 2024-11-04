@@ -11,17 +11,18 @@ import org.springframework.web.bind.annotation.*;
 @RestController
 @RequiredArgsConstructor
 @CrossOrigin
+@RequestMapping("/customer")
 public class CustomerController {
     private final CustomerService customerService;
     private final ObjectMapper objectMapper;
 
-    @PostMapping("/customer")
+    @PostMapping("/add")
     Customer presist(@RequestBody Customer customer) {
         return customerService.presist(customer);
     }
 
-    @DeleteMapping("/customer")
-    void deleteCustomer(@RequestParam(name = "id") Integer id) {
+    @DeleteMapping("/delete")
+    void deletedCustomer(@RequestParam(name = "id") Integer id) {
         customerService.deleteCustomer(id);
     }
 
@@ -32,6 +33,16 @@ public class CustomerController {
             return ResponseEntity.ok("Login Successfully !");
         }else {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: Invalid email or Password !");
+        }
+    }
+
+    @DeleteMapping("/delete-customer")
+    public ResponseEntity<String> deleteCustomer(@RequestBody Customer customer){
+        boolean isDeleted = customerService.deleteCustomerIfCredentialsMatch(customer.getEmail(),customer.getPassword());
+        if (isDeleted){
+            return ResponseEntity.ok("Customer deleted successfully.");
+        }else{
+            return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Invalid email or password.");
         }
     }
 

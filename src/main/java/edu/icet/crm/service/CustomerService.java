@@ -8,4 +8,6 @@ public interface CustomerService {
     void deleteCustomer(Integer id);
 
     Customer login(String email, String password);
+
+    boolean deleteCustomerIfCredentialsMatch(String email, String password);
 }
