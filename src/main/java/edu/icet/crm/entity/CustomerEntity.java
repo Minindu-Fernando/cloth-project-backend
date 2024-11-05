@@ -8,7 +8,7 @@ import lombok.Data;
 @Table(name = "customers")
 public class CustomerEntity {
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer customerId;
     private String customerName;
     private String email;

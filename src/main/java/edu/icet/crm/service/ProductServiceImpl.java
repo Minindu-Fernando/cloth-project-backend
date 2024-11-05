@@ -33,7 +33,7 @@ public class ProductServiceImpl implements ProductService {
         Files.copy(image.getInputStream(), imagePath);
 
         // Set image path in Product
-        product.setImage(fileName);
+        product.setImage("http://localhost:8080/images/" + fileName);
 
         // Save ProductEntity to the database
         ProductEntity savedEntity = productRepository.save(mapper.convertValue(product, ProductEntity.class));
@@ -47,5 +47,13 @@ public class ProductServiceImpl implements ProductService {
                 .map(entity -> mapper.convertValue(entity, Product.class))
                 .toList();
     }
+
+    @Override
+    public Product getProductById(Integer id) {
+        ProductEntity productEntity = productRepository.findById(id)
+                .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
+        return mapper.convertValue(productEntity, Product.class);
+    }
+
 
 }

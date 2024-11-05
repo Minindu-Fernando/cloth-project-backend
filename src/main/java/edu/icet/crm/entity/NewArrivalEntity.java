@@ -3,10 +3,10 @@ package edu.icet.crm.entity;
 import jakarta.persistence.*;
 import lombok.Data;
 
-@Entity
-@Table(name = "products")
 @Data
-public class ProductEntity {
+@Entity
+@Table(name = "new_arrival")
+public class NewArrivalEntity {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Integer productId;
@@ -16,5 +16,4 @@ public class ProductEntity {
     private Integer quantity;
     private Double price;
     private String image;
-
 }
