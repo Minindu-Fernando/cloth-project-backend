@@ -11,4 +11,6 @@ public interface ProductService {
     List<Product> getAllProducts();
 
     Product getProductById(Integer id);
+
+    List<Product> searchProducts(String keyword, Double minPrice, Double maxPrice);
 }

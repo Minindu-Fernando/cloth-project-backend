@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.stream.Collectors;
 
 @Service
 @RequiredArgsConstructor
@@ -53,6 +54,33 @@ public class ProductServiceImpl implements ProductService {
         ProductEntity productEntity = productRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
         return mapper.convertValue(productEntity, Product.class);
+    }
+
+    @Override
+    public List<Product> searchProducts(String keyword, Double minPrice, Double maxPrice) {
+        if (minPrice == null && maxPrice == null) {
+            // If no price range is provided, search only by the query
+            return productRepository
+                    .findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
+                            keyword, keyword, keyword)
+                    .stream()
+                    .map(entity -> mapper.convertValue(entity, Product.class))
+                    .collect(Collectors.toList());
+        } else if (minPrice == null) {
+            // If only maxPrice is provided, use 0 as the default minPrice
+            minPrice = 0.0;
+        } else if (maxPrice == null) {
+            // If only minPrice is provided, use a large value as the default maxPrice
+            maxPrice = Double.MAX_VALUE;
+        }
+
+        // Perform the search with the price range
+        return productRepository
+                .findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndPriceBetween(
+                        keyword, keyword, keyword, minPrice, maxPrice)
+                .stream()
+                .map(entity -> mapper.convertValue(entity, Product.class))
+                .collect(Collectors.toList());
     }
 
 
