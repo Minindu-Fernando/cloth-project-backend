@@ -16,6 +16,7 @@ public class CustomerController {
     private final CustomerService customerService;
     private final ObjectMapper objectMapper;
 
+
     @PostMapping("/add")
     Customer presist(@RequestBody Customer customer) {
         return customerService.presist(customer);
@@ -35,7 +36,6 @@ public class CustomerController {
             return ResponseEntity.status(HttpStatus.UNAUTHORIZED).body("Login failed: Invalid email or Password !");
         }
     }
-
     @DeleteMapping("/delete-customer")
     public ResponseEntity<String> deleteCustomer(@RequestBody Customer customer){
         boolean isDeleted = customerService.deleteCustomerIfCredentialsMatch(customer.getEmail(),customer.getPassword());

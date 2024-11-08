@@ -13,4 +13,6 @@ public interface ProductService {
     Product getProductById(Integer id);
 
     List<Product> searchProducts(String keyword, Double minPrice, Double maxPrice);
+
+    void deleteProduct(Integer id);
 }
