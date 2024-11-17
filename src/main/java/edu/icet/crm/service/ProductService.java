@@ -15,4 +15,6 @@ public interface ProductService {
     List<Product> searchProducts(String keyword, Double minPrice, Double maxPrice);
 
     void deleteProduct(Integer id);
+
+    Product updateProduct(Integer id, Product updatedProduct, MultipartFile image) throws IOException;
 }

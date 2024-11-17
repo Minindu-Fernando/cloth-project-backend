@@ -14,8 +14,9 @@ import java.util.Optional;
 public class CustomerServiceImpl implements CustomerService {
     private final CustomerRepository customerRepository;
     private final ObjectMapper mapper;
+
     @Override
-    public Customer presist(Customer customer) {
+    public Customer persist(Customer customer) {
         CustomerEntity save = customerRepository.save(mapper.convertValue(customer, CustomerEntity.class));
         return mapper.convertValue(save, Customer.class);
     }

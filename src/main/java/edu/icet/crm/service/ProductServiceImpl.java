@@ -15,6 +15,7 @@ import java.nio.file.Path;
 import java.nio.file.Paths;
 import java.util.List;
 import java.util.Objects;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -31,9 +32,16 @@ public class ProductServiceImpl implements ProductService {
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
         String imageDirectory = "src/main/resources/image/";
         Path imagePath = Paths.get(imageDirectory + fileName);
+
+        // Avoid overwriting existing files
+        if (Files.exists(imagePath)) {
+            throw new IOException("Image with the same name already exists: " + fileName);
+        }
+
+        // Copy the image to the file system
         Files.copy(image.getInputStream(), imagePath);
 
-        // Set image path in Product
+        // Set image URL in Product
         product.setImage("http://localhost:8080/images/" + fileName);
 
         // Save ProductEntity to the database
@@ -88,5 +96,43 @@ public class ProductServiceImpl implements ProductService {
         productRepository.deleteById(id);
     }
 
+    @Override
+    public Product updateProduct(Integer id, Product updatedProduct, MultipartFile image) throws IOException {
+        Optional<ProductEntity> optionalProductEntity = productRepository.findById(id);
 
+        if (optionalProductEntity.isPresent()) {
+            ProductEntity productEntity = optionalProductEntity.get();
+
+            // Update basic fields
+            productEntity.setProductName(updatedProduct.getProductName());
+            productEntity.setDescription(updatedProduct.getDescription());
+            productEntity.setCategory(updatedProduct.getCategory());
+            productEntity.setQuantity(updatedProduct.getQuantity());
+            productEntity.setPrice(updatedProduct.getPrice());
+
+            // Handle image if a new one is provided
+            if (image != null && !image.isEmpty()) {
+                String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
+                String imageDirectory = "src/main/resources/image/";
+                Path imagePath = Paths.get(imageDirectory + fileName);
+
+                // Copy the new image to the directory, overwriting the old one if necessary
+                Files.copy(image.getInputStream(), imagePath);
+
+                // Set the new image URL
+                productEntity.setImage("http://localhost:8080/images/" + fileName);
+            }
+
+            // Save updated entity
+            ProductEntity savedEntity = productRepository.save(productEntity);
+
+            // Convert saved entity to Product DTO (assuming mapper is configured)
+            return mapper.convertValue(savedEntity, Product.class);
+        } else {
+            throw new IOException("Product not found with ID: " + id);
+        }
+    }
 }
+
+
+

@@ -1,5 +1,6 @@
 package edu.icet.crm.controller;
 
+import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.icet.crm.model.Product;
 import edu.icet.crm.service.ProductService;
 import lombok.RequiredArgsConstructor;
@@ -16,6 +17,7 @@ import java.util.List;
 @CrossOrigin
 public class ProductController {
     private final ProductService productService;
+    private final ObjectMapper objectMapper;
 
     @PostMapping("/product")
     public Product presist(@RequestParam("product") String productJson,
@@ -51,6 +53,24 @@ public class ProductController {
     @DeleteMapping("/delete-product/{id}")
     public void deleteProduct(@PathVariable Integer id){
         productService.deleteProduct(id);
+    }
+
+    @PutMapping("/update-product-by/{id}")
+    public ResponseEntity<Product> updateProduct(
+            @PathVariable Integer id,
+            @RequestParam("productJson") String productJson,
+            @RequestParam(value = "image", required = false) MultipartFile image) {
+        try {
+            // Convert productJson to Product object
+            Product updatedProduct = objectMapper.readValue(productJson, Product.class);
+
+            // Update product using service
+            Product updatedProductResult = productService.updateProduct(id, updatedProduct, image);
+
+            return ResponseEntity.ok(updatedProductResult);
+        } catch (IOException e) {
+            return ResponseEntity.status(500).body(null);
+        }
     }
 
 

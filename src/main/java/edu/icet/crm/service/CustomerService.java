@@ -3,7 +3,7 @@ package edu.icet.crm.service;
 import edu.icet.crm.model.Customer;
 
 public interface CustomerService {
-    Customer presist(Customer customer);
+    Customer persist(Customer customer);
 
     void deleteCustomer(Integer id);
 

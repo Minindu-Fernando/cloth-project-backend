@@ -16,10 +16,9 @@ public class CustomerController {
     private final CustomerService customerService;
     private final ObjectMapper objectMapper;
 
-
     @PostMapping("/add")
-    Customer presist(@RequestBody Customer customer) {
-        return customerService.presist(customer);
+    Customer persist(@RequestBody Customer customer) {
+        return customerService.persist(customer);
     }
 
     @DeleteMapping("/delete")
