@@ -16,5 +16,4 @@ public class ProductEntity {
     private Integer quantity;
     private Double price;
     private String image;
-
 }
