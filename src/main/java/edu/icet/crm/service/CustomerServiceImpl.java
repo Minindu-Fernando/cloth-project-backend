@@ -17,6 +17,10 @@ public class CustomerServiceImpl implements CustomerService {
 
     @Override
     public Customer persist(Customer customer) {
+        Optional<CustomerEntity> existingCustomer = customerRepository.findByEmail(customer.getEmail());
+        if (existingCustomer.isPresent()) {
+            throw new IllegalArgumentException("Email already exists.");
+        }
         CustomerEntity save = customerRepository.save(mapper.convertValue(customer, CustomerEntity.class));
         return mapper.convertValue(save, Customer.class);
     }

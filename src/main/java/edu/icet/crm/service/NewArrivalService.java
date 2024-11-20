@@ -7,7 +7,15 @@ import java.io.IOException;
 import java.util.List;
 
 public interface NewArrivalService {
-    NewArrival presistNewArrival(String newArrivalProductJson, MultipartFile image) throws IOException;
+    NewArrival presist(String newArrivalProductJson, MultipartFile image) throws IOException;
 
     List<NewArrival> getAllProducts();
+    NewArrival getProductById(Integer id);
+
+    List<NewArrival> searchProducts(String keyword, Double minPrice, Double maxPrice);
+
+    void deleteProduct(Integer id);
+
+    NewArrival updateProduct(Integer id, NewArrival updatedProduct, MultipartFile image) throws IOException;
 }
+
