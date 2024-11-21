@@ -14,13 +14,28 @@ public class CartServiceImpl implements CartService {
 
     @Override
     public CartEntity addToCart(CartEntity cartItem) {
-        // Save the cart item in the database
         return cartRepository.save(cartItem);
     }
 
     @Override
     public List<CartEntity> getCartByEmail(String email) {
-        // Retrieve all cart items for the given email
         return cartRepository.findByEmail(email);
     }
+
+    @Override
+    public CartEntity updateCartItem(Long id, Integer newQuantity) {
+        CartEntity cartItem = cartRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+        cartItem.setQuantity(newQuantity);
+        return cartRepository.save(cartItem); // Save the updated item
+    }
+
+    @Override
+    public void removeCartItem(Long id) {
+        if (!cartRepository.existsById(id)) {
+            throw new IllegalArgumentException("Cart item not found");
+        }
+        cartRepository.deleteById(id); // Delete the item
+    }
 }
+

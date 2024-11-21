@@ -14,19 +14,29 @@ import java.util.List;
 @RequestMapping("/api/cart")
 public class CartController {
 
-private final CartService cartService;
+    private final CartService cartService;
 
-    // Add product to cart
     @PostMapping("/add")
     public ResponseEntity<CartEntity> addToCart(@RequestBody CartEntity cartItem) {
         CartEntity addedCartItem = cartService.addToCart(cartItem);
         return ResponseEntity.ok(addedCartItem);
     }
 
-    // Get cart items by email
     @GetMapping("/{email}")
     public ResponseEntity<List<CartEntity>> getCartByEmail(@PathVariable String email) {
         List<CartEntity> cartItems = cartService.getCartByEmail(email);
         return ResponseEntity.ok(cartItems);
+    }
+
+    @PutMapping("/{id}")
+    public ResponseEntity<CartEntity> updateCartItem(@PathVariable Long id, @RequestParam Integer quantity) {
+        CartEntity updatedCartItem = cartService.updateCartItem(id, quantity);
+        return ResponseEntity.ok(updatedCartItem);
+    }
+
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Void> removeCartItem(@PathVariable Long id) {
+        cartService.removeCartItem(id);
+        return ResponseEntity.noContent().build();
     }
 }
