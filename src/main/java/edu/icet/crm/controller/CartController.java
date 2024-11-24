@@ -7,6 +7,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
+import java.util.Map;
 
 @RestController
 @CrossOrigin
@@ -29,9 +30,14 @@ public class CartController {
     }
 
     @PutMapping("/{id}")
-    public ResponseEntity<CartEntity> updateCartItem(@PathVariable Long id, @RequestParam Integer quantity) {
-        CartEntity updatedCartItem = cartService.updateCartItem(id, quantity);
-        return ResponseEntity.ok(updatedCartItem);
+    public ResponseEntity<CartEntity> updateCartItem(@PathVariable Long id, @RequestBody Map<String, Integer> body) {
+        Integer quantity = body.get("quantity");
+        if (quantity == null) {
+            return ResponseEntity.badRequest().build();
+        }
+
+        CartEntity updatedItem = cartService.updateCartItem(id, quantity);
+        return ResponseEntity.ok(updatedItem);
     }
 
     @DeleteMapping("/{id}")
@@ -39,4 +45,5 @@ public class CartController {
         cartService.removeCartItem(id);
         return ResponseEntity.noContent().build();
     }
+
 }

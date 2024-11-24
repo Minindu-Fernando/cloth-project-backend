@@ -7,6 +7,7 @@ import java.util.List;
 public interface CartService {
     CartEntity addToCart(CartEntity cartItem);
     List<CartEntity> getCartByEmail(String email);
-    CartEntity updateCartItem(Long id, Integer newQuantity);
     void removeCartItem(Long id);
+    CartEntity updateCartItem(Long id, Integer quantity);
 }
+

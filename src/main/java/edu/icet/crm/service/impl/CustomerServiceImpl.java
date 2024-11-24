@@ -1,9 +1,10 @@
-package edu.icet.crm.service;
+package edu.icet.crm.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.icet.crm.entity.CustomerEntity;
 import edu.icet.crm.model.Customer;
 import edu.icet.crm.repository.CustomerRepository;
+import edu.icet.crm.service.CustomerService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

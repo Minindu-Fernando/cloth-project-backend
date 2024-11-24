@@ -1,9 +1,12 @@
-package edu.icet.crm.service;
+package edu.icet.crm.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
+import edu.icet.crm.entity.NewArrivalEntity;
 import edu.icet.crm.entity.ProductEntity;
+import edu.icet.crm.model.NewArrival;
 import edu.icet.crm.model.Product;
-import edu.icet.crm.repository.ProductRepository;
+import edu.icet.crm.repository.NewArrivalRepository;
+import edu.icet.crm.service.NewArrivalService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 import org.springframework.util.StringUtils;
@@ -18,15 +21,15 @@ import java.util.Objects;
 import java.util.Optional;
 import java.util.stream.Collectors;
 
-@Service
 @RequiredArgsConstructor
-public class ProductServiceImpl implements ProductService {
-    private final ProductRepository productRepository;
+@Service
+public class NewArrivalServiceImpl implements NewArrivalService {
     private final ObjectMapper mapper;
+    private final NewArrivalRepository newArrivalRepository;
 
     @Override
-    public Product presist(String productJson, MultipartFile image) throws IOException {
-        Product product = mapper.readValue(productJson, Product.class);
+    public NewArrival presist(String newArrivalProductJson, MultipartFile image) throws IOException {
+        NewArrival product = mapper.readValue(newArrivalProductJson, NewArrival.class);
 
         // Save image to the file system
         String fileName = StringUtils.cleanPath(Objects.requireNonNull(image.getOriginalFilename()));
@@ -45,34 +48,33 @@ public class ProductServiceImpl implements ProductService {
         product.setImage("http://localhost:8080/images/" + fileName);
 
         // Save ProductEntity to the database
-        ProductEntity savedEntity = productRepository.save(mapper.convertValue(product, ProductEntity.class));
-        return mapper.convertValue(savedEntity, Product.class);
+        NewArrivalEntity savedEntity = newArrivalRepository.save(mapper.convertValue(product, NewArrivalEntity.class));
+        return mapper.convertValue(savedEntity, NewArrival.class);
     }
 
     @Override
-    public List<Product> getAllProducts() {
-        List<ProductEntity> productEntities = (List<ProductEntity>) productRepository.findAll();
+    public List<NewArrival> getAllProducts() {
+        List<NewArrivalEntity> productEntities = (List<NewArrivalEntity>) newArrivalRepository.findAll();
         return productEntities.stream()
-                .map(entity -> mapper.convertValue(entity, Product.class))
+                .map(entity -> mapper.convertValue(entity, NewArrival.class))
                 .toList();
     }
 
     @Override
-    public Product getProductById(Integer id) {
-        ProductEntity productEntity = productRepository.findById(id)
+    public NewArrival getProductById(Integer id) {
+        NewArrivalEntity productEntity = newArrivalRepository.findById(id)
                 .orElseThrow(() -> new RuntimeException("Product not found with ID: " + id));
-        return mapper.convertValue(productEntity, Product.class);
-    }
+        return mapper.convertValue(productEntity, NewArrival.class);    }
 
     @Override
-    public List<Product> searchProducts(String keyword, Double minPrice, Double maxPrice) {
+    public List<NewArrival> searchProducts(String keyword, Double minPrice, Double maxPrice) {
         if (minPrice == null && maxPrice == null) {
             // If no price range is provided, search only by the query
-            return productRepository
+            return newArrivalRepository
                     .findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDescriptionContainingIgnoreCase(
                             keyword, keyword, keyword)
                     .stream()
-                    .map(entity -> mapper.convertValue(entity, Product.class))
+                    .map(entity -> mapper.convertValue(entity, NewArrival.class))
                     .collect(Collectors.toList());
         } else if (minPrice == null) {
             // If only maxPrice is provided, use 0 as the default minPrice
@@ -83,25 +85,24 @@ public class ProductServiceImpl implements ProductService {
         }
 
         // Perform the search with the price range
-        return productRepository
+        return newArrivalRepository
                 .findByProductNameContainingIgnoreCaseOrCategoryContainingIgnoreCaseOrDescriptionContainingIgnoreCaseAndPriceBetween(
                         keyword, keyword, keyword, minPrice, maxPrice)
                 .stream()
-                .map(entity -> mapper.convertValue(entity, Product.class))
-                .collect(Collectors.toList());
-    }
+                .map(entity -> mapper.convertValue(entity, NewArrival.class))
+                .collect(Collectors.toList());    }
 
     @Override
     public void deleteProduct(Integer id) {
-        productRepository.deleteById(id);
+        newArrivalRepository.deleteById(id);
     }
 
     @Override
-    public Product updateProduct(Integer id, Product updatedProduct, MultipartFile image) throws IOException {
-        Optional<ProductEntity> optionalProductEntity = productRepository.findById(id);
+    public NewArrival updateProduct(Integer id, NewArrival updatedProduct, MultipartFile image) throws IOException {
+        Optional<NewArrivalEntity> optionalProductEntity = newArrivalRepository.findById(id);
 
         if (optionalProductEntity.isPresent()) {
-            ProductEntity productEntity = optionalProductEntity.get();
+            NewArrivalEntity productEntity = optionalProductEntity.get();
 
             // Update basic fields
             productEntity.setProductName(updatedProduct.getProductName());
@@ -124,15 +125,12 @@ public class ProductServiceImpl implements ProductService {
             }
 
             // Save updated entity
-            ProductEntity savedEntity = productRepository.save(productEntity);
+            NewArrivalEntity savedEntity = newArrivalRepository.save(productEntity);
 
             // Convert saved entity to Product DTO (assuming mapper is configured)
-            return mapper.convertValue(savedEntity, Product.class);
+            return mapper.convertValue(savedEntity, NewArrival.class);
         } else {
             throw new IOException("Product not found with ID: " + id);
         }
     }
 }
-
-
-

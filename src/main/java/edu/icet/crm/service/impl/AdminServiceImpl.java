@@ -1,9 +1,10 @@
-package edu.icet.crm.service;
+package edu.icet.crm.service.impl;
 
 import com.fasterxml.jackson.databind.ObjectMapper;
 import edu.icet.crm.entity.AdminEntity;
 import edu.icet.crm.model.Admin;
 import edu.icet.crm.repository.AdminRepository;
+import edu.icet.crm.service.AdminService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 

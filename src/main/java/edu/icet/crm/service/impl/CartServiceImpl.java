@@ -1,7 +1,8 @@
-package edu.icet.crm.service;
+package edu.icet.crm.service.impl;
 
 import edu.icet.crm.entity.CartEntity;
 import edu.icet.crm.repository.CartRepository;
+import edu.icet.crm.service.CartService;
 import lombok.RequiredArgsConstructor;
 import org.springframework.stereotype.Service;
 
@@ -21,15 +22,6 @@ public class CartServiceImpl implements CartService {
     public List<CartEntity> getCartByEmail(String email) {
         return cartRepository.findByEmail(email);
     }
-
-    @Override
-    public CartEntity updateCartItem(Long id, Integer newQuantity) {
-        CartEntity cartItem = cartRepository.findById(id)
-                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
-        cartItem.setQuantity(newQuantity);
-        return cartRepository.save(cartItem); // Save the updated item
-    }
-
     @Override
     public void removeCartItem(Long id) {
         if (!cartRepository.existsById(id)) {
@@ -37,5 +29,13 @@ public class CartServiceImpl implements CartService {
         }
         cartRepository.deleteById(id); // Delete the item
     }
+    @Override
+    public CartEntity updateCartItem(Long id, Integer quantity) {
+        CartEntity cartItem = cartRepository.findById(id)
+                .orElseThrow(() -> new IllegalArgumentException("Cart item not found"));
+        cartItem.setQuantity(quantity);
+        return cartRepository.save(cartItem);
+    }
+
 }
 
